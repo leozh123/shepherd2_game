@@ -5,7 +5,11 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="screen-orientation" content="landscape">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>🐺 偷羊大作战 v5.18-sfx - 牧羊人射击</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -178,10 +182,10 @@ canvas { display: block; }
   pointer-events: none;
 }
 
-/* 方向键区域 - 左下角 */
+/* 方向键区域 - 右下角 */
 #dpad {
   position: absolute;
-  left: 20px;
+  right: 20px;
   bottom: 20px;
   width: 150px;
   height: 150px;
@@ -215,47 +219,6 @@ canvas { display: block; }
 #btnLeft { left: 0; top: 50px; }
 #btnRight { left: 100px; top: 50px; }
 #btnDown { left: 50px; bottom: 0; }
-
-/* 动作按钮区域 - 右下角 */
-#actionBtns {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  pointer-events: auto;
-}
-
-.action-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: rgba(231, 76, 60, 0.7);
-  border: 3px solid rgba(255,255,255,0.6);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  transition: background 0.1s;
-  margin-top: 10px;
-}
-
-.action-btn:active {
-  background: rgba(231, 76, 60, 0.9);
-}
-
-#btnShoot {
-  background: rgba(46, 204, 113, 0.7);
-  border-color: rgba(255,255,255,0.6);
-}
-
-#btnShoot:active {
-  background: rgba(46, 204, 113, 0.9);
-}
 
 /* 显示/隐藏逻辑 */
 @media (pointer: coarse) {
@@ -1596,10 +1559,7 @@ function drawShepherd(sh) {
     <div class="dpad-btn" id="btnRight">→</div>
     <div class="dpad-btn" id="btnDown">↓</div>
   </div>
-  <div id="actionBtns">
-    <div class="action-btn" id="btnShoot">射击</div>
-    <div class="action-btn" id="btnRestart">重来</div>
-  </div>
+
 </div>
 
 <script>
@@ -1613,6 +1573,11 @@ function drawShepherd(sh) {
   
   // 显示虚拟控制器
   document.getElementById('mobileControls').style.display = 'block';
+  
+  // 尝试锁定横屏
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
   
   // 防止触摸时滚动页面
   document.addEventListener('touchmove', function(e) {
@@ -1656,30 +1621,6 @@ function drawShepherd(sh) {
   bindDpadBtn('btnDown', 'ArrowDown');
   
   // 绑定动作按钮
-  const btnShoot = document.getElementById('btnShoot');
-  if (btnShoot) {
-    btnShoot.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      // 触发空格键（射击）
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }));
-      setTimeout(() => {
-        document.dispatchEvent(new KeyboardEvent('keyup', { key: ' ' }));
-      }, 100);
-    });
-  }
-  
-  const btnRestart = document.getElementById('btnRestart');
-  if (btnRestart) {
-    btnRestart.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      // 触发R键（重新开始）
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
-      setTimeout(() => {
-        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'r' }));
-      }, 100);
-    });
-  }
-  
   // 适配画布大小
   function resizeCanvas() {
     const canvas = document.getElementById('gameCanvas');
